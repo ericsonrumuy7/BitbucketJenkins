@@ -10,6 +10,7 @@ class Bitbucket:
         self.client.session.headers.update({'Content-Type': 'application/json'})
         self.project = Project(self.client)
         self.branchRestriction = BranchRestriction(self.client)
+        self.permission = Permission(self.client)
     
 class Project:
     def __init__(self, client):
@@ -22,11 +23,11 @@ class Project:
         """
         return self.client.get(self.resource_path + project_key)
 
-    def create(self, key, name, description):
+    def create(self, project_key, project_name, description):
         """
         Create a project in bitbucket server
         """
-        data = json.dumps(dict(key=key, name=name, description=description))
+        data = json.dumps(dict(key=project_key, name=project_name, description=description))
         return self.client.post(self.resource_path, data)
 
 class BranchRestriction:
@@ -64,5 +65,21 @@ class BranchRestriction:
                 self.index += 1
         data = json.dumps(self.data)
         return self.client.post(self.resource_path.format(project_key.upper()), data, headers={'Content-Type':'application/vnd.atl.bitbucket.bulk+json'})
+
+class Permission:
+    def __init__(self, client):
+        self.client = client
+        self.resource_path = "/rest/api/1.0/projects/{}/permissions/{}/all?allow=true"
+
+    def create(self, project_key, permission):
+        """
+        Create/grant default permission to a bitbucket project.
+        Permissions are :
+        - PROJECT_READ
+        - PROJECT_WRITE
+        - PROJECT_ADMIN
+        """
+        return self.client.post(self.resource_path.format(project_key, permission))
+
 
 
