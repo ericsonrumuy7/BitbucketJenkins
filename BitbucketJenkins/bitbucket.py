@@ -3,6 +3,7 @@
 import json
 import requests
 from .client import Client
+from .error import error
 
 class Bitbucket:
     def __init__(self, base_url, username, password):
@@ -17,12 +18,14 @@ class Project:
         self.client = client
         self.resource_path = "/rest/api/1.0/projects/"
 
+    @error
     def get(self, project_key):
         """
         Retrieve the project matching the supplied key
         """
         return self.client.get(self.resource_path + project_key)
 
+    @error
     def create(self, project_key, project_name, description):
         """
         Create a project in bitbucket server
@@ -37,12 +40,14 @@ class BranchRestriction:
         self.data = []
         self.branch_types = ["fast-forward-only", "no-deletes", "pull-request-only"]
     
+    @error
     def get(self, project_key):
         """
         Retrieve branch restriction by key
         """
         return self.client.get(self.resource_path.format(project_key))
     
+    @error
     def create(self, project_key, *argv):
         """
         Create branch restriction to a project
@@ -71,6 +76,7 @@ class Permission:
         self.client = client
         self.resource_path = "/rest/api/1.0/projects/{}/permissions/{}/all?allow=true"
 
+    @error
     def create(self, project_key, permission):
         """
         Create/grant default permission to a bitbucket project.

@@ -3,6 +3,7 @@
 import json
 import requests
 from .client import Client
+from .error import error
 
 class Jenkins:
     def __init__(self, base_url, username, password):
@@ -104,6 +105,7 @@ class Job:
   <buildStrategies/>
 </jenkins.branch.OrganizationFolder>'''
     
+    @error
     def create(self, project_id, **kwargs):
         """
         Create a jenkins job with bitbucket team/project plugin
