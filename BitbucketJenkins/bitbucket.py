@@ -12,6 +12,7 @@ class Bitbucket:
         self.project = Project(self.client)
         self.branchRestriction = BranchRestriction(self.client)
         self.permission = Permission(self.client)
+        self.defaultReviewer = DefaultReviewer(self.client)
     
 class Project:
     def __init__(self, client):
@@ -48,18 +49,18 @@ class BranchRestriction:
         return self.client.get(self.resource_path.format(project_key))
     
     @error
-    def create(self, project_key, *argv):
+    def create(self, project_key, branches):
         """
         Create branch restriction to a project
         """
         self.index = 0
-        for i in range(0, len(argv)):
+        for i in range(0, len(branches)):
             for branch_type in self.branch_types:
                 self.data.append({})
                 self.data[self.index]['type'] = branch_type
                 self.data[self.index]['matcher'] = {}
-                self.data[self.index]['matcher']['id'] = argv[i]
-                self.data[self.index]['matcher']['displayId'] = argv[i]
+                self.data[self.index]['matcher']['id'] = branches[i]
+                self.data[self.index]['matcher']['displayId'] = branches[i]
                 self.data[self.index]['matcher']['type'] = {}
                 self.data[self.index]['matcher']['type']['id'] = "BRANCH"
                 self.data[self.index]['matcher']['type']['name'] = "Branch"
@@ -87,5 +88,57 @@ class Permission:
         """
         return self.client.post(self.resource_path.format(project_key, permission))
 
+class DefaultReviewer:
+    def __init__(self, client):
+        self.client = client
+        self.resource_path = "/rest/default-reviewers/1.0/projects/{}/condition"
+        self.data = {}
+
+    @error
+    def get(self, project_key):
+        """
+        Retrieve default reviewer matchin the supplied key
+        """
+        return self.client.get(self.resource_path.format(project_key) + 's')
+    
+    def getUserID(self, username):
+        """
+        Retrieve user ID
+        """
+        user_path = "/rest/api/1.0/users/{}"
+        try :
+            data = self.client.get(user_path.format(username))
+            user_id = json.loads(data.text)['id']
+            return user_id
+        except ValueError:
+            print("username not found")
+
+    @error
+    def create(self, project_key, users, branch):
+        """
+        Create default reviewer in project
+        """
+        self.data['reviewers'] = []
+        for i in range(0, len(users)) : 
+            user_id = self.getUserID(users[i])
+            self.data['reviewers'].append({})
+            self.data['reviewers'][i]['id'] = user_id
+        self.data['sourceMatcher'] = {}
+        self.data['sourceMatcher']['active'] = True
+        self.data['sourceMatcher']['id'] = "ANY_REF_MATCHER_ID"
+        self.data['sourceMatcher']['displayId'] = "ANY_REF_MATCHER_ID"
+        self.data['sourceMatcher']['type'] = {}
+        self.data['sourceMatcher']['type']['id'] = "ANY_REF"
+        self.data['sourceMatcher']['type']['name'] = "Any branch"
+        self.data['targetMatcher'] = {}
+        self.data['targetMatcher']['active'] = True
+        self.data['targetMatcher']['id'] = branch
+        self.data['targetMatcher']['displayId'] = branch
+        self.data['targetMatcher']['type'] = {}
+        self.data['targetMatcher']['type']['id'] = "BRANCH"
+        self.data['targetMatcher']['type']['name'] = "Branch"
+        self.data['requiredApprovals'] = 1
+        data = json.dumps(self.data)
+        return self.client.post(self.resource_path.format(project_key), data)
 
 

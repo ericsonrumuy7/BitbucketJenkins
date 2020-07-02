@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="BitbucketJenkins",
-    version="0.1.0",
+    version="0.2.0",
     author="Ericson Rumuy",
     author_email="ericsonrumuy@gmail.com",
     description="A package for create Bitbucket project that integrate with Jenkins using Bitbucket team/project plugin",
