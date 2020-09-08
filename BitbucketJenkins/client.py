@@ -23,6 +23,9 @@ class Client:
     def post(self, resource_path, data=None, **kwargs):
         return self.session.post(self.url(resource_path), data, **kwargs)
     
+    def put(self, resource_path, data=None, **kwargs):
+        return self.session.put(self.url(resource_path), data, **kwargs)
+    
     def getCrumb(self):
         data = json.loads(self.get("/crumbIssuer/api/json").text)
         crumb = data['crumb']

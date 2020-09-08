@@ -5,13 +5,13 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="BitbucketJenkins",
-    version="0.2.0",
+    version="0.3.0",
     author="Ericson Rumuy",
     author_email="ericsonrumuy@gmail.com",
     description="A package for create Bitbucket project that integrate with Jenkins using Bitbucket team/project plugin",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/ericsonrumuy7/Bitbucket",
+    url="https://github.com/ericsonrumuy7/BitbucketJenkins",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 2",

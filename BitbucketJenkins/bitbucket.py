@@ -13,6 +13,7 @@ class Bitbucket:
         self.branchRestriction = BranchRestriction(self.client)
         self.permission = Permission(self.client)
         self.defaultReviewer = DefaultReviewer(self.client)
+        self.admin = Admin(self.client)
     
 class Project:
     def __init__(self, client):
@@ -140,5 +141,17 @@ class DefaultReviewer:
         self.data['requiredApprovals'] = 1
         data = json.dumps(self.data)
         return self.client.post(self.resource_path.format(project_key), data)
+
+class Admin:
+    def __init__(self, client):
+        self.client = client
+        self.resource_path = "/rest/api/1.0/projects/{}/permissions/users?name={}&permission=PROJECT_ADMIN"
+
+    @error
+    def create(self, project_key, username):
+        """
+        Create an admin user for a project
+        """
+        return self.client.put(self.resource_path.format(project_key, username))
 
 

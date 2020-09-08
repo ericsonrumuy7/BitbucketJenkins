@@ -82,7 +82,7 @@ class Job:
       <repoOwner>PROJECT_ID</repoOwner>
       <traits>
         <com.cloudbees.jenkins.plugins.bitbucket.BranchDiscoveryTrait>
-          <strategyId>1</strategyId>
+          <strategyId>3</strategyId>
         </com.cloudbees.jenkins.plugins.bitbucket.BranchDiscoveryTrait>
         <com.cloudbees.jenkins.plugins.bitbucket.OriginPullRequestDiscoveryTrait>
           <strategyId>1</strategyId>
