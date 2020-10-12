@@ -14,6 +14,7 @@ class Bitbucket:
         self.permission = Permission(self.client)
         self.defaultReviewer = DefaultReviewer(self.client)
         self.admin = Admin(self.client)
+        self.defaultMergeStrategy = DefaultMergeStrategy(self.client)
     
 class Project:
     def __init__(self, client):
@@ -154,4 +155,28 @@ class Admin:
         """
         return self.client.put(self.resource_path.format(project_key, username))
 
+class DefaultMergeStrategy:
+    def __init__(self, client):
+        self.client = client
+        self.resource_path = "/rest/api/1.0/projects/{}/settings/pull-requests/git"
+        self.data = {
+            "mergeConfig": {
+                "defaultStrategy": {
+                    "id": "squash"
+                },
+                "strategies": [
+                    {
+                        "id": "squash"
+                    }
+                ]
+            }
+        }
 
+    def create(self, project_key, merge_id):
+        """
+        Create default merge strategy in project
+        """
+        self.data['mergeConfig']['defaultStrategy']['id'] = merge_id
+        self.data['mergeConfig']['strategies'][0]['id'] = merge_id
+        data = json.dumps(self.data)
+        return self.client.post(self.resource_path.format(project_key), data)
